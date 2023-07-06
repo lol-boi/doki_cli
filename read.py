@@ -1,18 +1,17 @@
 import csv
 import os
 from tabulate import tabulate
-from functions import read_file
+from functions import read_file,write_file
 
 #Add a system to check if a path to sync is already in another parent path and resolve it
 
 
 
 
-file_add = 'test.txt'
+file_add = 'test.csv'
 def view_dir(): 
-    array = read_file(file_add)
-    nested_list = [[element] for element in array]
-    print(tabulate(nested_list,['S.No','Directories'], showindex="always",tablefmt="rounded_grid"))
+    nested_list = read_file(file_add)
+    print(tabulate(nested_list,['S.No','Sync_path','Paste_path'], showindex="always",tablefmt="rounded_grid"))
 
 
 def cli_interface():
@@ -30,23 +29,19 @@ def cli_interface():
 
 
         if choice == 0:
-            input_array = input("Enter the directories, seprated by spaces: ")
-            input_array = input_array.split()
-            print(input_array)
-            with open(file_add, 'a') as file:
-                for i in input_array:
-                    file.write(i + '\n')
+            write_file(file_add)
+
 
         elif choice == 1: 
             view_dir()
             
-            with open(file_add, 'r') as file:
-                lines = file.readlines()    
+            lines = read_file(file_add)
             del_line_index = int(input("Enter the line to be deleted: "))
             if del_line_index <= len(lines):
                 del lines[del_line_index]
                 with open(file_add, 'w') as file:
-                    file.writelines(lines)
+                    writer = csv.writer(file)
+                    writer.writerows(lines)
                 print("Line deleted sucessfully!")
             else:
                 print("Invalid line number!")

@@ -1,7 +1,6 @@
-# Make a function to treverse mouted directory and stores the files with their name and add
-# Make a function to check if the directory is mounted
-# Make a function to check for changes in a file
-
+#Function to append changes
+#Only check for paths on a specific time
+#make it so that in csv file it stores read destination then write destination
 
 import os
 import time
@@ -11,7 +10,7 @@ import hashlib
 import json
 
 
-file_path = 'test.txt'
+file_path = 'test.csv'
 threads = []
 
 
@@ -21,13 +20,14 @@ def check_dir_status():
     paths = read_file(file_path)
     while True:
         for path in paths:
-            if os.path.exists(path):
-                sync_thread = threading.Thread(target=sync, name=f"Thread {path}", args=(path,))
+            if os.path.exists(path[0]) and os.path.exists(path[1]):
+                sync_thread = threading.Thread(target=sync, name=f"Thread {path[0]}", args=(path[0],path[1]))
                 sync_thread.start()
                 threads.append(sync_thread)
+            else:
+                print(path," does not exist")
         for i in threads:
             i.join()
-            print("Thread joined back to main thread")
         threads.clear()
     
                 
@@ -36,7 +36,7 @@ def check_dir_status():
 
 
 
-def sync(directory_path):
+def sync(directory_path,Paste_path):
 
     print(f"{directory_path} tread is started.....")
     directory_name = os.path.basename(directory_path)
@@ -80,7 +80,7 @@ def sync(directory_path):
         with open (previous_scan_path, 'w') as file:
             json.dump(current_scan_data, file, indent = 4)
         
-        append_files(changed_files) #now replace or paste files
+        #append_files(changed_files) #now replace or paste files
 
     update_changes(directory_name,directory_path)    
     print(f"{directory_path} is stopped--------")
