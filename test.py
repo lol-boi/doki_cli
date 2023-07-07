@@ -1,14 +1,10 @@
-import os
+import shutil
 
-def create_folders_if_not_exists(file_path):
-    directory = os.path.dirname(file_path)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-        print(f"Created directories: {directory}")
-    else:
-        print(f"Directories already exist: {directory}")
+def copy_file(source_path, destination_path):
+    shutil.copy2(source_path, destination_path)
+    print(f"File copied from {source_path} to {destination_path}")
 
 # Example usage
-file_path = "/home/anzen/Music/new_file/newer_file/newest_file/"
-create_folders_if_not_exists(file_path)
-
+source_path = "/home/anzen/Pictures/wallpaper/pc/Guts.jpg"
+destination_path = "/home/anzen/Documents/test/duck/pc/Guts.jpg"
+copy_file(source_path, destination_path)

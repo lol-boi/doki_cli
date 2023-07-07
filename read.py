@@ -29,6 +29,7 @@ def cli_interface():
 
 
         if choice == 0:
+            print("Make sure the distination_folder is empty!")
             write_file(file_add)
 
 

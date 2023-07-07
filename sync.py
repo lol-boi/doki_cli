@@ -1,10 +1,9 @@
-#Function to append changes
-#Only check for paths on a specific time
-#make it so that in csv file it stores read destination then write destination
+#use source and destination
 
 import os
 import time
 import threading
+import shutil
 from functions import read_file
 import hashlib
 import json
@@ -13,14 +12,20 @@ import json
 file_path = 'test.csv'
 threads = []
 
+def create_folders_if_not_exists(file_path):
+    directory = os.path.dirname(file_path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+        print(f"Created directories: {directory}")
 
 
 def check_dir_status():
 
     paths = read_file(file_path)
-    while True:
+    for i in range(1):
         for path in paths:
-            if os.path.exists(path[0]) and os.path.exists(path[1]):
+            create_folders_if_not_exists(path[1])
+            if os.path.exists(path[0]):
                 sync_thread = threading.Thread(target=sync, name=f"Thread {path[0]}", args=(path[0],path[1]))
                 sync_thread.start()
                 threads.append(sync_thread)
@@ -41,6 +46,18 @@ def sync(directory_path,Paste_path):
     print(f"{directory_path} tread is started.....")
     directory_name = os.path.basename(directory_path)
     
+
+    def update_dir(changes,target_path,des_path):
+        new_changes =[]
+        for i in changes: 
+            new_path = os.path.relpath(i,target_path)
+            new_path = os.path.join(Paste_path,new_path)
+            create_folders_if_not_exists(new_path)
+            new_changes.append(new_path)
+        count = 0 
+        for i in changes:
+            shutil.copy2(i,new_changes[count])
+            count += 1
 
     def scan_directory(directory_path):
         file_data = {}
@@ -79,12 +96,13 @@ def sync(directory_path,Paste_path):
         
         with open (previous_scan_path, 'w') as file:
             json.dump(current_scan_data, file, indent = 4)
-        
-        #append_files(changed_files) #now replace or paste files
 
-    update_changes(directory_name,directory_path)    
+        update_dir(changed_files,directory_path,Paste_path)
+    
+
+
+    update_changes(directory_name,directory_path)   
     print(f"{directory_path} is stopped--------")
-
-
+        
 check_dir_status()
 

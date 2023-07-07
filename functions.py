@@ -9,8 +9,8 @@ def read_file(path):
     return nested_array
 
 def write_file(file_add):
-    input_array = input("Enter the Sync_path and Paste_path , seprated by space: ")
-    input_array = input_array.split()
+    input_array = input("Enter the Sync_path and Paste_path , seprated by '||': ")
+    input_array = input_array.split(sep=" || ")
     print(input_array)
     with open(file_add, 'a') as file:
         writer = csv.writer(file)
